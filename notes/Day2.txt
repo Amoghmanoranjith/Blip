@@ -1,0 +1,68 @@
+Work on specific pojo validation
+
+Trigger:
+    cron trigger:
+        structural validation:
+        -> has to have schedule in config
+        -> validate the format
+        semantic validation
+        ->
+
+Operator:
+    http: (we are meant to make a http request)
+        structural validation:
+        -> has to have url
+        -> has to have method
+        -> the method has to exist
+        -> headers is optional
+        -> body is optional
+        -> response type is needed
+        semantic validation:
+        -> if method is get then cannot have body
+
+    transform: (convert some input to a different format)
+        structural validation:
+        -> needs expression
+        -> needs output field
+        semantic validation:
+        -> parameter has to exist if variable
+
+    condition: (will have boolean expression and two choices)
+        structural validation:
+        -> task id if true
+        -> task id if false
+        -> boolean expression
+        -> doesnt need output part
+        semantic validation:
+        -> both the tasks have to exist
+
+    delay: (stop  execution for some time)
+        structural validation:
+        -> takes input for how many seconds
+        -> shouldnt have output
+        -> shouldnt have dependencies
+        -> shouldnt have onError
+
+    other parts we will add later
+
+OnError:
+    fail:
+        structural:
+        -> takes no config
+    continue
+        structural:
+        -> takes no config
+    retry
+        structural:
+        -> takes number of retries
+
+the key is to decouple these such that all the validation is encapsulated for that case with itself
+i dont want cross cutting concerns
+
+I also need a class that will run all these im calling it parser1 for now
+I need to define where how i am going to convert to specific pojos
+Validation Context is a state that keeps the job definition, errors list, reference count map, task count map, task map
+
+
+I have clarity on the error format, i want to give the exact path to the field where error has occured
+I also want to make sure that any error that is being is thrown i want it to be controlled from messages.properties
