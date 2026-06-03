@@ -8,6 +8,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,8 +33,8 @@ public class TaskDefinition {
     // not required but if given
     // avoid duplicate dependency
     // avoid non existing dependency
-    private String[] dependencies;
-    private Object output;
+    private List<String> dependencies;
+    private String output;
     @Valid
     private OnErrorDefinition onError;
 }
