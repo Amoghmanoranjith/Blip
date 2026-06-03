@@ -20,7 +20,6 @@ public class SemanticValidator {
     // requires task map
     // go through the map and check for counts more than 1
     private void validateDuplicateTaskIds(
-            JobDefinition jobDefinition,
             List<ValidationError> errors,
             Map<String, Integer> taskMap) {
 
@@ -118,7 +117,6 @@ public class SemanticValidator {
     // output name has to be unique if present
     // use reference map
     private void validateOutputUniqueness(
-            JobDefinition jobDefinition,
             List<ValidationError> errors,
             Map<String, Integer> referenceMap) {
 
@@ -136,9 +134,6 @@ public class SemanticValidator {
         });
     }
 
-    // this is specific pojo level process so i intend on populating the task and reference map for further use
-    private void validateReferences(JobDefinition jobDefinition, List<ValidationError> errors) {
-    }
 
     // create a dag and check for cycles
     // it would be smarter to skip this part and return if any previous validations fail such as first and second
@@ -233,7 +228,6 @@ public class SemanticValidator {
         });
 
         validateDuplicateTaskIds(
-                jobDefinition,
                 errors,
                 taskCountMap
         );
@@ -255,7 +249,6 @@ public class SemanticValidator {
         );
 
         validateOutputUniqueness(
-                jobDefinition,
                 errors,
                 referenceCountMap
         );
