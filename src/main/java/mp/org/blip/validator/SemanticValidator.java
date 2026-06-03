@@ -1,6 +1,8 @@
 package mp.org.blip.validator;
 
+import mp.org.blip.context.ValidationContext;
 import mp.org.blip.definition.JobDefinition;
+import mp.org.blip.definition.TaskDefinition;
 import mp.org.blip.error.ValidationError;
 import org.springframework.stereotype.Component;
 
@@ -202,39 +204,44 @@ public class SemanticValidator {
         }
     }
 
-    public void validate(JobDefinition jobDefinition, List<ValidationError> errors) {
+    public ValidationContext validate(ValidationContext validationContext) {
         // task map
         // populate a map with key as task id and value as count
         // reference map
         // populate another map with key as output name and value as count
-        Map<String, Integer> taskMap = new HashMap<>();
-        Map<String, Integer> referenceMap = new HashMap<>();
+        Map<String, Integer> taskCountMap = new HashMap<>();
+        Map<String, Integer> referenceCountMap = new HashMap<>();
+        Map<String, TaskDefinition> taskMap = new HashMap<>();
+        List<ValidationError> errors = validationContext.getErrors();
+        JobDefinition jobDefinition = validationContext.getJobDefinition();
+
         jobDefinition.getTasks().forEach(task -> {
-            taskMap.merge(
+            taskCountMap.merge(
                     task.getId(),
                     1,
                     Integer::sum
             );
             if (task.getOutput() != null) {
 
-                referenceMap.merge(
+                referenceCountMap.merge(
                         task.getOutput(),
                         1,
                         Integer::sum
                 );
             }
+            taskMap.put(task.getId(), task);
         });
 
         validateDuplicateTaskIds(
                 jobDefinition,
                 errors,
-                taskMap
+                taskCountMap
         );
 
         validateDependencyExistence(
                 jobDefinition,
                 errors,
-                taskMap
+                taskCountMap
         );
 
         validateSelfDependencies(
@@ -250,7 +257,7 @@ public class SemanticValidator {
         validateOutputUniqueness(
                 jobDefinition,
                 errors,
-                referenceMap
+                referenceCountMap
         );
 
         boolean graphSafe =
@@ -264,6 +271,11 @@ public class SemanticValidator {
                     errors
             );
         }
+        validationContext.setErrors(errors);
+        validationContext.setTaskCountMap(taskCountMap);
+        validationContext.setReferenceCountMap(referenceCountMap);
+        validationContext.setTaskMap(taskMap);
+        return validationContext;
     }
 }
 
