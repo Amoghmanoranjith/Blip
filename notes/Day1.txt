@@ -1,0 +1,69 @@
+What should my yaml look like is the first question i had.
+The yaml structure will define what kind of services blip will provide
+We want to design the .yaml format and convert it to a specific pojo that is the goal for the day
+
+job_name
+
+trigger:
+    type:
+    config:
+
+tasks:
+    -id
+     type
+     config
+     dependencies
+     output
+     on_error:
+        action:
+        config:
+
+There are some validations i will be doing:
+1. job _name can be anything we will gen an id at db lvl
+2. semantics has to followed (prolly be handled by jackson)
+3. id has to be unique within tasks no need for global uniqueness
+4. job_name has to be given
+5. each trigger need to have type and config
+6. each task needs taskName(unique),
+    type,
+    config,
+    dependencies is optional(default empty),
+    output is optional(default null),
+    on_error is optional(default continue)
+7. we will detect invalid fields and show error
+8. errors that we will define are as follows:
+    something missing from point 5 or 6
+    invalid fields, these may be typos or a new field both we treat as a new field and throw error
+
+Three layers of validation:
+1. Structural(jackson)
+    missing fields handled here
+2. Schema
+    unknown fields handled here
+3. Semantic
+    -> duplicate task id
+    -> task id not found
+    -> cycle detected
+    -> no end in sight (meaning there is a cycle so point 3 again)
+    -> self dependency
+    -> duplicate dependency in the same list
+    -> different tasks same output name used
+    -> referenced variable has to exist
+    -> invalid inputs for a field (this will go under specific pojo validation)
+
+
+YAML
+↓
+Generic POJO
+↓
+Generic Structural Validation
+↓
+Generic Schema Validation
+↓
+Semantic Validation
+↓
+Specific POJO Conversion
+↓
+Specific Validation
+↓
+Persist

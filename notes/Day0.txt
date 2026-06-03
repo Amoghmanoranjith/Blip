@@ -1,0 +1,7 @@
+We only want cron trigger for now
+
+We will provide only these services for now:
+    http
+    transform
+    condition
+    delay
