@@ -47,7 +47,7 @@ Three layers of validation:
     -> no end in sight (meaning there is a cycle so point 3 again)
     -> self dependency
     -> duplicate dependency in the same list
-    -> different tasks same output name used
+    -> different tasks same output name used but in real life this would mean one task would overwrite the o
     -> referenced variable has to exist
     -> invalid inputs for a field (this will go under specific pojo validation)
 
@@ -64,6 +64,8 @@ Semantic Validation
 ↓
 Specific POJO Conversion
 ↓
-Specific Validation
+Specific Structural Validation
+↓
+Specific Schema Validation
 ↓
 Persist

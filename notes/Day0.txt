@@ -5,3 +5,5 @@ We will provide only these services for now:
     transform
     condition
     delay
+
+Errors we provide based on the field name
