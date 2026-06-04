@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import mp.org.blip.definition.JobDefinition;
 import mp.org.blip.definition.TaskDefinition;
-import mp.org.blip.error.ValidationError;
+import mp.org.blip.exception.ValidationError;
 
 import java.util.List;
 import java.util.Map;
