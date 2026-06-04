@@ -1,0 +1,18 @@
+job_name: job1
+
+trigger:
+  type: cron
+  config:
+    schedule: "*/10 * * * * *"
+
+tasks:
+  - id: t1
+    type: http
+    config:
+      method: GET
+      url: "https://jsonplaceholder.typicode.com/users/1"
+      type: json
+    output: user
+
+    on_error:
+      action: fail

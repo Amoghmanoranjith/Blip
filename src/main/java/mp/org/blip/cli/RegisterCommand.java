@@ -1,16 +1,25 @@
 package mp.org.blip.cli;
 
+import mp.org.blip.service.RegisterService;
 import org.springframework.stereotype.Component;
 
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.Command;
 
+import java.io.IOException;
+
 @Component
 @Command(
         name = "register",
-        description = "Register a workflow YAML file"
+        description = "Register a job YAML file"
 )
 public class RegisterCommand implements Runnable {
+
+    private final RegisterService registerService;
+
+    public RegisterCommand(RegisterService registerService) {
+        this.registerService = registerService;
+    }
 
     @Parameters(
             index = "0",
@@ -20,12 +29,6 @@ public class RegisterCommand implements Runnable {
 
     @Override
     public void run() {
-
-        System.out.println("Registering workflow:");
-        System.out.println(yamlPath);
-
-        // call parser
-        // call validator
-        // save to DB
+        this.registerService.register(this.yamlPath);
     }
 }

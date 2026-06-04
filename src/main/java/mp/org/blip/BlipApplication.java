@@ -1,6 +1,5 @@
 package mp.org.blip;
 
-import mp.org.blip.cli.BlipCommand;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -9,10 +8,10 @@ import picocli.CommandLine;
 @SpringBootApplication
 public class BlipApplication implements CommandLineRunner {
 
-    private final BlipCommand blipCommand;
+    private final CommandLine commandLine;
 
-    public BlipApplication(BlipCommand blipCommand) {
-        this.blipCommand = blipCommand;
+    public BlipApplication(CommandLine commandLine) {
+        this.commandLine = commandLine;
     }
 
     public static void main(String[] args) {
@@ -21,10 +20,7 @@ public class BlipApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-
-        int exitCode = new CommandLine(blipCommand)
-                .execute(args);
-
+        int exitCode = this.commandLine.execute(args);
         System.exit(exitCode);
     }
 }
