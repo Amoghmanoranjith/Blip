@@ -1,4 +1,4 @@
-package mp.org.blip.error;
+package mp.org.blip.exception;
 
 public record ValidationError(
         String field,
