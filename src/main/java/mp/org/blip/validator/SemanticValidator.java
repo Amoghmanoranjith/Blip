@@ -3,7 +3,7 @@ package mp.org.blip.validator;
 import mp.org.blip.context.ValidationContext;
 import mp.org.blip.definition.JobDefinition;
 import mp.org.blip.definition.TaskDefinition;
-import mp.org.blip.error.ValidationError;
+import mp.org.blip.exception.ValidationError;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -20,7 +20,7 @@ public class SemanticValidator {
     // requires task map
     // go through the map and check for counts more than 1
     private void validateDuplicateTaskIds(
-            List<ValidationError> errors,
+            Set<ValidationError> errors,
             Map<String, Integer> taskMap) {
 
         taskMap.forEach((taskId, count) -> {
@@ -39,7 +39,7 @@ public class SemanticValidator {
     // go through the task ids and check for existance in map
     private void validateDependencyExistence(
             JobDefinition jobDefinition,
-            List<ValidationError> errors,
+            Set<ValidationError> errors,
             Map<String, Integer> taskMap) {
 
         jobDefinition.getTasks().forEach(task -> {
@@ -66,7 +66,7 @@ public class SemanticValidator {
     // simple sweep check if task id is present in its own dependency
     private void validateSelfDependencies(
             JobDefinition jobDefinition,
-            List<ValidationError> errors) {
+            Set<ValidationError> errors) {
 
         jobDefinition.getTasks().forEach(task -> {
 
@@ -89,7 +89,7 @@ public class SemanticValidator {
     // for each task create a set and check for duplicate
     private void validateDuplicateDependencies(
             JobDefinition jobDefinition,
-            List<ValidationError> errors) {
+            Set<ValidationError> errors) {
 
         jobDefinition.getTasks().forEach(task -> {
 
@@ -117,7 +117,7 @@ public class SemanticValidator {
     // output name has to be unique if present
     // use reference map
     private void validateOutputUniqueness(
-            List<ValidationError> errors,
+            Set<ValidationError> errors,
             Map<String, Integer> referenceMap) {
 
         referenceMap.forEach((output, count) -> {
@@ -145,7 +145,7 @@ public class SemanticValidator {
     // then we look for the next independent node
     // at any point if the queue is not empty and we have not found an independent node then this means we have a cycle
 
-    private void validateCycles(JobDefinition jobDefinition, List<ValidationError> errors) {
+    private void validateCycles(JobDefinition jobDefinition, Set<ValidationError> errors) {
 
         Map<String, List<String>> graph = new HashMap<>();
         Map<String, Integer> indegree = new HashMap<>();
@@ -199,7 +199,7 @@ public class SemanticValidator {
         }
     }
 
-    public ValidationContext validate(ValidationContext validationContext) {
+    public void validate(ValidationContext validationContext) {
         // task map
         // populate a map with key as task id and value as count
         // reference map
@@ -207,7 +207,7 @@ public class SemanticValidator {
         Map<String, Integer> taskCountMap = new HashMap<>();
         Map<String, Integer> referenceCountMap = new HashMap<>();
         Map<String, TaskDefinition> taskMap = new HashMap<>();
-        List<ValidationError> errors = validationContext.getErrors();
+        Set<ValidationError> errors = validationContext.getErrors();
         JobDefinition jobDefinition = validationContext.getJobDefinition();
 
         jobDefinition.getTasks().forEach(task -> {
@@ -268,7 +268,6 @@ public class SemanticValidator {
         validationContext.setTaskCountMap(taskCountMap);
         validationContext.setReferenceCountMap(referenceCountMap);
         validationContext.setTaskMap(taskMap);
-        return validationContext;
     }
 }
 
