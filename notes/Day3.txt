@@ -1,0 +1,27 @@
+Still working on the specific validations.
+:<
+ik the layers of validations:
+file validation (FileException blip) ✅
+    -> file not found
+    -> unable to open file
+jackson syntax validation parse exception
+(UnrecognizedPropertyException, MismatchedInputException, JsonParseException jackson) ✅
+    -> wrong syntax
+    -> type mismatch
+    -> having unknown fields
+generic structural validation (ValidationException jakarta)
+    -> missing fields
+generic semantic validation (SemanticValidationException blip)
+    -> semantics as defined in day1
+Jackson syntax validation (same as above)
+    -> type mismatch
+    -> having unknown fields
+specific structural validation (ValidationException jakarta)
+    -> missing fields
+specific semantic validation (SemanticValidationException blip)
+    -> semantics as per model
+
+Requirements:
+each layer returns its own list of validation failures
+jackson layers return fast fails
+we show the user only the error and where it has occurred
