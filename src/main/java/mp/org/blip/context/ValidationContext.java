@@ -10,6 +10,7 @@ import mp.org.blip.exception.ValidationError;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -17,7 +18,7 @@ import java.util.Map;
 @Builder
 public class ValidationContext {
     private JobDefinition jobDefinition;
-    private List<ValidationError> errors;
+    private Set<ValidationError> errors;
     private Map<String, Integer> referenceCountMap;
     private Map<String, Integer> taskCountMap;
     private Map<String, TaskDefinition> taskMap;
