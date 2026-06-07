@@ -1,7 +1,6 @@
 package mp.org.blip.validator.trigger;
 
 import mp.org.blip.context.ValidationContext;
-import mp.org.blip.definition.TriggerDefinition;
 import mp.org.blip.enumeration.TriggerTypes;
 import mp.org.blip.exception.ValidationError;
 import org.springframework.stereotype.Component;
@@ -18,7 +17,7 @@ public class TriggerValidator {
         String triggerTypeString = validationContext.getJobDefinition().getTrigger().getType();
         if(!TriggerTypes.isValid(triggerTypeString)){
             // make this use a message template instead and interpolate here
-            validationContext.addError(new ValidationError(path+"type", "Invalid trigger type"));
+            validationContext.addError(new ValidationError(parentPath+"type", "Invalid trigger type"));
             return;
         }
 

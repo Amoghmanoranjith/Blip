@@ -3,7 +3,6 @@ package mp.org.blip.validator.trigger;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import mp.org.blip.context.ValidationContext;
-import mp.org.blip.definition.TriggerDefinition;
 import mp.org.blip.definition.trigger.CronConfigDefinition;
 import mp.org.blip.exception.ValidationError;
 import org.springframework.stereotype.Component;

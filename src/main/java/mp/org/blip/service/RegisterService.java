@@ -1,9 +1,6 @@
 package mp.org.blip.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Valid;
 import mp.org.blip.context.ValidationContext;
-import mp.org.blip.definition.JobDefinition;
 import mp.org.blip.exception.ValidationException;
 import mp.org.blip.validator.SemanticValidator;
 import mp.org.blip.validator.SpecificValidator;
@@ -11,9 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 @Service

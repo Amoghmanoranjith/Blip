@@ -22,4 +22,8 @@ public class ValidationContext {
     private Map<String, Integer> referenceCountMap;
     private Map<String, Integer> taskCountMap;
     private Map<String, TaskDefinition> taskMap;
+
+    public void addError(ValidationError validationError) {
+        errors.add(validationError);
+    }
 }
