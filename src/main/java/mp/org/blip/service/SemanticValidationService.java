@@ -1,4 +1,4 @@
-package mp.org.blip.validator;
+package mp.org.blip.service;
 
 import mp.org.blip.context.ValidationContext;
 import mp.org.blip.definition.JobDefinition;
@@ -16,7 +16,7 @@ import java.util.*;
 // ig we can store the semantic errors with fields and messages
 // e.g tasks.<some-task-name> has duplicate name
 @Component
-public class SemanticValidator {
+public class SemanticValidationService {
     // requires task map
     // go through the map and check for counts more than 1
     private void validateDuplicateTaskIds(
@@ -204,28 +204,11 @@ public class SemanticValidator {
         // populate a map with key as task id and value as count
         // reference map
         // populate another map with key as output name and value as count
-        Map<String, Integer> taskCountMap = new HashMap<>();
-        Map<String, Integer> referenceCountMap = new HashMap<>();
-        Map<String, TaskDefinition> taskMap = new HashMap<>();
+        Map<String, Integer> taskCountMap = validationContext.getTaskCountMap();
+        Map<String, Integer> referenceCountMap = validationContext.getReferenceCountMap();
+        Map<String, TaskDefinition> taskMap = validationContext.getTaskMap();
         Set<ValidationError> errors = validationContext.getErrors();
         JobDefinition jobDefinition = validationContext.getJobDefinition();
-
-        jobDefinition.getTasks().forEach(task -> {
-            taskCountMap.merge(
-                    task.getId(),
-                    1,
-                    Integer::sum
-            );
-            if (task.getOutput() != null) {
-
-                referenceCountMap.merge(
-                        task.getOutput(),
-                        1,
-                        Integer::sum
-                );
-            }
-            taskMap.put(task.getId(), task);
-        });
 
         validateDuplicateTaskIds(
                 errors,

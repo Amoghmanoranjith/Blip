@@ -1,5 +1,4 @@
-job_name: job1
-
+job_name: test
 trigger:
   type: cron
   config:
@@ -14,5 +13,16 @@ tasks:
       type: json
     output: user
 
+    on_error:
+      action: fail
+
+  - id: t1
+    type: http
+    config:
+      method: GET
+      url: "https://jsonplaceholder.typicode.com/users/1"
+      type: json
+    output: user
+    dependencies: [t1]
     on_error:
       action: fail

@@ -7,8 +7,7 @@ import java.util.Set;
 @Getter
 public class ValidationException extends RuntimeException {
     private final Set<ValidationError> errors;
-    public ValidationException(String message, Set<ValidationError> errors) {
-        super(message);
+    public ValidationException(Set<ValidationError> errors) {
         this.errors = errors;
     }
 }
