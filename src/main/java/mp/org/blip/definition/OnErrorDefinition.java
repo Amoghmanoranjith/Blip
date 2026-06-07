@@ -17,6 +17,6 @@ public class OnErrorDefinition {
 
     @NotBlank(message = "{generic.on_error.action.required}")
     private String action;
-    @NotNull(message = "{generic.on_error.config.required}")
+//    @NotNull(message = "{generic.on_error.config.required}")
     private Object config;
 }

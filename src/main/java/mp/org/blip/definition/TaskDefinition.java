@@ -1,5 +1,6 @@
 package mp.org.blip.definition;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -36,5 +37,6 @@ public class TaskDefinition {
     private List<String> dependencies;
     private String output;
     @Valid
+    @JsonProperty("on_error")
     private OnErrorDefinition onError;
 }
