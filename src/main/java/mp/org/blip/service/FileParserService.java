@@ -56,13 +56,15 @@ public class FileParserService {
                     filePath.toFile(),
                     JobDefinition.class
             );
+            Set<ValidationError> errorSet = validationContext.getErrors();
             validationContext.setJobDefinition(jobDefinition);
             Set<ConstraintViolation<JobDefinition>> violations = validator.validate(jobDefinition);
+
             if (!violations.isEmpty()) {
-                validationContext.setErrors(violations.stream()
-                        .map(v -> new ValidationError(v.getPropertyPath().toString(), v.getMessage()))
-                        .collect(Collectors.toSet()));
+                violations.stream()
+                        .forEach(v -> errorSet.add(new ValidationError(v.getPropertyPath().toString(), v.getMessage())));
             }
+            validationContext.setErrors(errorSet);
         } catch (UnrecognizedPropertyException e) { // this is schema
             throw new YamlParseException(e.getLocation().getLineNr(), e.getLocation().getColumnNr(), "yaml.field.unrecognised");
         } catch (JacksonYAMLParseException e) { // this is syntax
