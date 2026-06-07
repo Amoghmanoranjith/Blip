@@ -6,9 +6,7 @@ import mp.org.blip.validator.trigger.TriggerValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Queue;
 
 @Component
 public class SpecificValidationService {

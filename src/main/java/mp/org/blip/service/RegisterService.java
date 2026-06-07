@@ -3,7 +3,6 @@ package mp.org.blip.service;
 import mp.org.blip.context.ValidationContext;
 import mp.org.blip.definition.JobDefinition;
 import mp.org.blip.definition.TaskDefinition;
-import mp.org.blip.exception.ValidationError;
 import mp.org.blip.exception.ValidationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +12,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class RegisterService {

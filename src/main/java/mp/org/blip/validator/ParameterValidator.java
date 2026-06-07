@@ -3,7 +3,6 @@ package mp.org.blip.validator;
 import mp.org.blip.context.ValidationContext;
 import mp.org.blip.exception.ValidationError;
 
-import java.util.Set;
 import java.util.regex.Pattern;
 
 public final class ParameterValidator {
