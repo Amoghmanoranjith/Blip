@@ -9,17 +9,10 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class ObjectMapperConfig {
-
     @Bean
-    public ObjectMapper yamlObjectMapper() {
-        ObjectMapper mapper =
-                new ObjectMapper(new YAMLFactory());
-
-        mapper.configure(
-                DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-                true
-        );
-
+    public ObjectMapper objectMapper() {
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, true);
         return mapper;
     }
 }
