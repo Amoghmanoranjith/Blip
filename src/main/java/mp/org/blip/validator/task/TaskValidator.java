@@ -8,9 +8,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class TaskValidator {
     private final HttpValidator httpValidator;
-
-    public TaskValidator(HttpValidator httpValidator) {
+    private final DelayValidator delayValidator;
+    public TaskValidator(HttpValidator httpValidator, DelayValidator delayValidator) {
         this.httpValidator = httpValidator;
+        this.delayValidator = delayValidator;
     }
 
     public void validate(ValidationContext validationContext, Integer index, String parentProperty) {
@@ -23,6 +24,7 @@ public class TaskValidator {
         TaskTypes taskType = TaskTypes.from(taskTypeString);
         switch (taskType) {
             case TaskTypes.HTTP -> this.httpValidator.validate(validationContext, validationContext.getJobDefinition().getTasks().get(index), parentProperty);
+            case TaskTypes.DELAY -> this.delayValidator.validate(validationContext, validationContext.getJobDefinition().getTasks().get(index), parentProperty);
         }
     }
 }
