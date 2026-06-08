@@ -83,7 +83,7 @@ public class HttpValidator {
         validationContext.mergeDependencies(taskDefinition.getId(), params.get("body"));
         validationContext.mergeDependencies(taskDefinition.getId(), params.get("headers"));
 
-        this.onErrorValidator.validate(validationContext, taskDefinition.getOnError(), parentProperty + "on_error.");
+        this.onErrorValidator.validate(validationContext, taskDefinition, parentProperty + "on_error.");
 
     }
 }
