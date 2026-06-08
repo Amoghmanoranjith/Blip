@@ -39,4 +39,7 @@ public class ValidationContext {
     public void mergeDependencies(String id, Set<String> dependencies) {
         this.taskDependenciesMapping.get(id).addAll(dependencies);
     }
+    public void mergeDependency(String id, String dependency){
+        this.taskDependenciesMapping.get(id).add(dependency);
+    }
 }

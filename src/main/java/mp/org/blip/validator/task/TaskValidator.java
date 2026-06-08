@@ -13,7 +13,7 @@ public class TaskValidator {
         this.httpValidator = httpValidator;
         this.delayValidator = delayValidator;
     }
-
+    // tasks[0].
     public void validate(ValidationContext validationContext, Integer index, String parentProperty) {
         String taskTypeString = validationContext.getJobDefinition().getTasks().get(index).getType();
         if(!TaskTypes.isValid(taskTypeString)){

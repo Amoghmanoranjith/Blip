@@ -11,6 +11,7 @@ import mp.org.blip.enumeration.HttpResponseTypes;
 import mp.org.blip.exception.ValidationError;
 import mp.org.blip.util.ParameterExtractor;
 import mp.org.blip.validator.ParameterValidator;
+import mp.org.blip.validator.onerror.OnErrorValidator;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -27,16 +28,24 @@ import java.util.*;
 public class HttpValidator {
     private final ObjectMapper objectMapper;
     private final Validator validator;
-
-    public HttpValidator(ObjectMapper objectMapper, Validator validator) {
+    private final OnErrorValidator onErrorValidator;
+    public HttpValidator(ObjectMapper objectMapper, Validator validator, OnErrorValidator onErrorValidator) {
         this.objectMapper = objectMapper;
         this.validator = validator;
+        this.onErrorValidator = onErrorValidator;
     }
-
+    // tasks[0].
     public void validate(ValidationContext validationContext, TaskDefinition taskDefinition, String parentProperty) {
 
         HttpConfigDefinition definition = this.objectMapper.convertValue(taskDefinition.getConfig(), HttpConfigDefinition.class);
         Set<ConstraintViolation<HttpConfigDefinition>> violations = this.validator.validate(definition);
+
+        if (!violations.isEmpty()) {
+            for (ConstraintViolation<HttpConfigDefinition> violation : violations) {
+                validationContext.addError(new ValidationError(parentProperty + "config." + violation.getPropertyPath().toString(), violation.getMessage()));
+            }
+        }
+
         // structural validation
         if (!HttpMethodTypes.isValid(definition.getMethod())) {
             validationContext.addError(new ValidationError(parentProperty + "config.method", "Method not valid"));
@@ -50,11 +59,7 @@ public class HttpValidator {
         if (!HttpResponseTypes.isValid(definition.getResponseType())) {
             validationContext.addError(new ValidationError(parentProperty + "config.response_type", "Response type not valid"));
         }
-        if (!violations.isEmpty()) {
-            for (ConstraintViolation<HttpConfigDefinition> violation : violations) {
-                validationContext.addError(new ValidationError(parentProperty + "config." + violation.getPropertyPath().toString(), violation.getMessage()));
-            }
-        }
+
         // semantic validation
         // validate syntactically data from each field
         ParameterValidator.validate(definition.getUrl(), validationContext, parentProperty + "config.url");
@@ -77,6 +82,8 @@ public class HttpValidator {
         validationContext.mergeDependencies(taskDefinition.getId(), params.get("url"));
         validationContext.mergeDependencies(taskDefinition.getId(), params.get("body"));
         validationContext.mergeDependencies(taskDefinition.getId(), params.get("headers"));
+
+        this.onErrorValidator.validate(validationContext, taskDefinition.getOnError(), parentProperty + "on_error.");
 
     }
 }

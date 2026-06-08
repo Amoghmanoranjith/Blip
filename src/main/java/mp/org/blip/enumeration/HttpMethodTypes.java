@@ -10,7 +10,7 @@ public enum HttpMethodTypes {
     DELETE;
 
     public static HttpMethodTypes from(String value) {
-            return mp.org.blip.enumeration.HttpMethodTypes.valueOf(value.toUpperCase());
+            return HttpMethodTypes.valueOf(value.toUpperCase());
     }
 
     public static boolean isValid(String value) {

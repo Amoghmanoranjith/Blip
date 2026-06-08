@@ -5,6 +5,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import mp.org.blip.context.ValidationContext;
 import mp.org.blip.definition.OnErrorDefinition;
+import mp.org.blip.definition.TaskDefinition;
 import mp.org.blip.definition.onerror.FallbackConfigDefinition;
 import mp.org.blip.definition.onerror.RetryConfigDefinition;
 import mp.org.blip.exception.ValidationError;
@@ -21,17 +22,20 @@ public class FallbackValidator {
     }
 
     // property will be like task[0].on_error.config.
-    public void validate(ValidationContext validationContext, OnErrorDefinition onErrorDefinition, String parentProperty) {
-        FallbackConfigDefinition definition = this.objectMapper.convertValue(onErrorDefinition.getConfig(), FallbackConfigDefinition.class);
+    public void validate(ValidationContext validationContext, TaskDefinition taskDefinition, String parentProperty) {
+        FallbackConfigDefinition definition = this.objectMapper.convertValue(taskDefinition.getOnError().getConfig(), FallbackConfigDefinition.class);
         Set<ConstraintViolation<FallbackConfigDefinition>> violations = this.validator.validate(definition);
         if (!violations.isEmpty()) {
             violations.forEach(violation -> {
                 validationContext.addError(new ValidationError(parentProperty + violation.getPropertyPath().toString(), violation.getMessage()));
             });
         }
-        // check if string is present or not
+        // check if task is present or not
         if(!validationContext.getTaskCountMap().containsKey(definition.getFallbackTask())){
             validationContext.addError(new ValidationError(parentProperty + "fallback", "Fallback does not exist."));
         }
+        // add this as a dependency
+        validationContext.mergeDependency(taskDefinition.getId(), definition.getFallbackTask());
+
     }
 }

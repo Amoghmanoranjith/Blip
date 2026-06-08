@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Validator;
 import mp.org.blip.context.ValidationContext;
 import mp.org.blip.definition.OnErrorDefinition;
+import mp.org.blip.definition.TaskDefinition;
 import mp.org.blip.enumeration.OnErrorTypes;
 import mp.org.blip.exception.ValidationError;
 import org.springframework.stereotype.Component;
@@ -24,25 +25,25 @@ public class OnErrorValidator {
     }
 
     // task[0].on_error.
-    public void validate(ValidationContext validationContext, OnErrorDefinition onErrorDefinition, String parentProperty) {
+    public void validate(ValidationContext validationContext, TaskDefinition taskDefinition, String parentProperty) {
         // is the type of onerror provided valid?
-        String onErrorTypeString = onErrorDefinition.getAction();
+        String onErrorTypeString = taskDefinition.getOnError().getAction();
         if(!OnErrorTypes.isValid(onErrorTypeString)) {
             validationContext.addError(new ValidationError(parentProperty + "action", "Action is not valid"));
             return; // cant move to switch
         }
         switch (OnErrorTypes.valueOf(onErrorTypeString)) {
             case OnErrorTypes.FAIL -> {
-                this.failValidator.validate(validationContext, onErrorDefinition, parentProperty + "config.");
+                this.failValidator.validate(validationContext, taskDefinition, parentProperty + "config.");
             }
             case OnErrorTypes.CONTINUE -> {
-                this.continueValidator.validate(validationContext, onErrorDefinition, parentProperty + "config.");
+                this.continueValidator.validate(validationContext, taskDefinition, parentProperty + "config.");
             }
             case OnErrorTypes.RETRY -> {
-                this.retryValidator.validate(validationContext, onErrorDefinition, parentProperty + "config.");
+                this.retryValidator.validate(validationContext, taskDefinition, parentProperty + "config.");
             }
             case OnErrorTypes.FALLBACK -> {
-                this.fallbackValidator.validate(validationContext, onErrorDefinition, parentProperty + "config.");
+                this.fallbackValidator.validate(validationContext, taskDefinition, parentProperty + "config.");
             }
         }
     }
