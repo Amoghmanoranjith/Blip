@@ -1,5 +1,7 @@
 package mp.org.blip.service;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
@@ -8,6 +10,7 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import mp.org.blip.context.ValidationContext;
 import mp.org.blip.definition.JobDefinition;
+import mp.org.blip.definition.trigger.CronConfigDefinition;
 import mp.org.blip.exception.FileException;
 import mp.org.blip.exception.ValidationError;
 import mp.org.blip.exception.YamlParseException;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 import java.util.Set;
 
 @Service
@@ -68,9 +72,13 @@ public class FileParserService {
             throw new YamlParseException(e.getLocation().getLineNr(), e.getLocation().getColumnNr(), "yaml.field.unrecognised");
         } catch (JacksonYAMLParseException e) { // this is syntax
             throw new YamlParseException(e.getLocation().getLineNr(), e.getLocation().getColumnNr(), "yaml.syntax.invalid");
+        } catch (JsonParseException e) {
+            throw new YamlParseException(e.getLocation().getLineNr(), e.getLocation().getColumnNr(), "yaml.field.duplicate");
         } catch (MismatchedInputException e) { // this is schem
             throw new YamlParseException(e.getLocation().getLineNr(), e.getLocation().getColumnNr(), "yaml.field.type_mismatch");
         } catch (Exception e) { // default
+            logger.info(e.getClass().toString());
+            logger.info(e.getMessage());
             throw new FileException(
                     path,
                     "Unable to read file"

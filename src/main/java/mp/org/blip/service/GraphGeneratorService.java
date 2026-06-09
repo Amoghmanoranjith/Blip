@@ -15,6 +15,9 @@ public class GraphGeneratorService {
         Map<String, List<String>> dag = new HashMap<>();
         Map<String, Integer> ingress = new HashMap<>();
         for (TaskDefinition taskDefinition : validationContext.getJobDefinition().getTasks()) {
+            if(taskDefinition.getDependencies() == null || taskDefinition.getDependencies().isEmpty()) {
+                continue;
+            }
             String child = taskDefinition.getId();
             for (String parent : taskDefinition.getDependencies()) {
                 if (!dag.containsKey(parent)) {

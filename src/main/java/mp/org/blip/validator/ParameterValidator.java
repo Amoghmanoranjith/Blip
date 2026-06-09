@@ -24,7 +24,7 @@ public final class ParameterValidator {
             }
             String param = input.substring(index + 2, end);
             if (!PARAM_NAME_PATTERN.matcher(param).matches()) {
-                validationContext.addError(new ValidationError(parentProperty, "Invalid output variable syntax: ${" + param + "}"));
+                validationContext.addError(new ValidationError(parentProperty, "Invalid output variable syntax: " + param + ""));
             }
             index = end + 1;
         }

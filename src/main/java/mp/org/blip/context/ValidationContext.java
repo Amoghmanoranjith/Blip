@@ -8,6 +8,7 @@ import mp.org.blip.definition.JobDefinition;
 import mp.org.blip.definition.TaskDefinition;
 import mp.org.blip.exception.ValidationError;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -37,7 +38,7 @@ public class ValidationContext {
         errors.add(validationError);
     }
     public void mergeDependencies(String id, Set<String> dependencies) {
-        this.taskDependenciesMapping.get(id).addAll(dependencies);
+        this.taskDependenciesMapping.computeIfAbsent(id, k -> new HashSet<>()).addAll(dependencies);
     }
     public void mergeDependency(String id, String dependency){
         this.taskDependenciesMapping.get(id).add(dependency);

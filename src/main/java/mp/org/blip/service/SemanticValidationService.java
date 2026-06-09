@@ -21,13 +21,14 @@ public class SemanticValidationService {
     // go through the map and check for counts more than 1
     private void validateDuplicateTaskIds(
             Set<ValidationError> errors,
-            Map<String, Integer> taskMap) {
+            Map<String, Integer> taskMap,
+            Map<String, Integer> taskIndex) {
 
         taskMap.forEach((taskId, count) -> {
             if (count > 1) {
                 errors.add(
                         new ValidationError(
-                                "tasks." + taskId,
+                                "tasks[" + taskIndex.get(taskId) + "]",
                                 "Duplicate task id"
                         )
                 );
@@ -40,33 +41,32 @@ public class SemanticValidationService {
     private void validateDependencyExistence(
             JobDefinition jobDefinition,
             Set<ValidationError> errors,
-            Map<String, Integer> taskMap) {
+            Map<String, Integer> taskMap,
+            Map<String, Integer> taskIndex) {
 
         jobDefinition.getTasks().forEach(task -> {
-
             if (task.getDependencies() == null) {
                 return;
             }
-
-            task.getDependencies().forEach(dep -> {
-
+            for(int i = 0;i<task.getDependencies().size();i++) {
+                String dep =  task.getDependencies().get(i);
                 if (!taskMap.containsKey(dep)) {
                     errors.add(
                             new ValidationError(
-                                    "tasks." + task.getId() + ".dependencies",
-                                    "Dependency not found: " + dep
+                                    "tasks[" + taskIndex.get(task.getId()) + "].dependencies["+i+"]",
+                                    "Dependency not found."
                             )
                     );
                 }
-
-            });
+            }
         });
     }
 
     // simple sweep check if task id is present in its own dependency
     private void validateSelfDependencies(
             JobDefinition jobDefinition,
-            Set<ValidationError> errors) {
+            Set<ValidationError> errors,
+            Map<String, Integer> taskIndex) {
 
         jobDefinition.getTasks().forEach(task -> {
 
@@ -77,8 +77,8 @@ public class SemanticValidationService {
             if (task.getDependencies().contains(task.getId())) {
                 errors.add(
                         new ValidationError(
-                                "tasks." + task.getId(),
-                                "Task depends on itself"
+                                "tasks[" + taskIndex.get(task.getId()) + "]",
+                                "Task depends on itself."
                         )
                 );
             }
@@ -89,7 +89,8 @@ public class SemanticValidationService {
     // for each task create a set and check for duplicate
     private void validateDuplicateDependencies(
             JobDefinition jobDefinition,
-            Set<ValidationError> errors) {
+            Set<ValidationError> errors,
+            Map<String, Integer> taskIndex) {
 
         jobDefinition.getTasks().forEach(task -> {
 
@@ -98,19 +99,17 @@ public class SemanticValidationService {
             }
 
             Set<String> seen = new HashSet<>();
-
-            task.getDependencies().forEach(dep -> {
-
+            for(int i = 0;i<task.getDependencies().size();i++) {
+                String dep =  task.getDependencies().get(i);
                 if (!seen.add(dep)) {
                     errors.add(
                             new ValidationError(
-                                    "tasks." + task.getId() + ".dependencies",
-                                    "Duplicate dependency: " + dep
+                                    "tasks[" + taskIndex.get(task.getId()) + "].dependencies["+i+"]",
+                                    "Duplicate dependency."
                             )
                     );
                 }
-
-            });
+            }
         });
     }
 
@@ -118,15 +117,16 @@ public class SemanticValidationService {
     // use reference map
     private void validateOutputUniqueness(
             Set<ValidationError> errors,
-            Map<String, Integer> referenceMap) {
+            Map<String, Integer> referenceMap,
+            Map<String, Integer> getTaskIndexForOutput) {
 
         referenceMap.forEach((output, count) -> {
 
             if (count > 1) {
                 errors.add(
                         new ValidationError(
-                                "output." + output,
-                                "Duplicate output name"
+                                "tasks["+getTaskIndexForOutput.get(output)+"].output",
+                                "Duplicate output name."
                         )
                 );
             }
@@ -209,44 +209,55 @@ public class SemanticValidationService {
         Map<String, TaskDefinition> taskMap = validationContext.getTaskMap();
         Set<ValidationError> errors = validationContext.getErrors();
         JobDefinition jobDefinition = validationContext.getJobDefinition();
-
+        Map<String, Integer> getTaskIndex = new HashMap<>();
+        Map<String, Integer> getTaskIndexForOutput = new HashMap<>();
+        for(int i = 0;i<validationContext.getJobDefinition().getTasks().size();i++) {
+            getTaskIndex.put(validationContext.getJobDefinition().getTasks().get(i).getId(), i);
+            getTaskIndexForOutput.put(validationContext.getJobDefinition().getTasks().get(i).getOutput(), i);
+        }
         validateDuplicateTaskIds(
                 errors,
-                taskCountMap
+                taskCountMap,
+                getTaskIndex
         );
 
         validateDependencyExistence(
                 jobDefinition,
                 errors,
-                taskCountMap
+                taskCountMap,
+                getTaskIndex
         );
 
         validateSelfDependencies(
                 jobDefinition,
-                errors
+                errors,
+                getTaskIndex
         );
 
         validateDuplicateDependencies(
                 jobDefinition,
-                errors
+                errors,
+                getTaskIndex
         );
 
         validateOutputUniqueness(
                 errors,
-                referenceCountMap
+                referenceCountMap,
+                getTaskIndexForOutput
         );
-
-        boolean graphSafe =
-                errors.stream().noneMatch(error ->
-                        error.message().contains("Duplicate task id")
-                                || error.message().contains("Dependency not found")
-                );
-        if (graphSafe) {
-            validateCycles(
-                    jobDefinition,
-                    errors
-            );
-        }
+//****************************************************************************************************
+//        boolean graphSafe =
+//                errors.stream().noneMatch(error ->
+//                        error.message().contains("Duplicate task id")
+//                                || error.message().contains("Dependency not found")
+//                );
+//        if (graphSafe) {
+//            validateCycles(
+//                    jobDefinition,
+//                    errors
+//            );
+//        }
+//****************************************************************************************************
         validationContext.setErrors(errors);
         validationContext.setTaskCountMap(taskCountMap);
         validationContext.setReferenceCountMap(referenceCountMap);

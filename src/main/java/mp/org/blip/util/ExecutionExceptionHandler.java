@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import picocli.CommandLine;
 
+import java.util.Arrays;
+
 @Component
 public class ExecutionExceptionHandler implements CommandLine.IExecutionExceptionHandler {
     private final MessageSourceUtil messageSourceUtil;
@@ -25,7 +27,7 @@ public class ExecutionExceptionHandler implements CommandLine.IExecutionExceptio
             case FileException fileException ->
                     commandLine.getErr().println(fileException.getFilePath() + " " + e.getMessage());
             case YamlParseException ex -> commandLine.getErr().println(
-                    this.messageSourceUtil.getMessage(ex.getMessage())
+                    this.messageSourceUtil.getMessage(ex.getMessage()) + " at Line: " + ex.getLineNumber() + " Column: " + ex.getColumnNumber()
             );
             case ValidationException ex -> {
                 commandLine.getErr().println("\u001B[31m[ERROR] Schema validation failed:\u001B[0m");
@@ -38,7 +40,7 @@ public class ExecutionExceptionHandler implements CommandLine.IExecutionExceptio
                     );
                 });
             }
-            case null, default -> commandLine.getErr().println(e.getMessage() + "i got");
+            case null, default -> commandLine.getErr().println(Arrays.toString(e.getStackTrace()) + "i got");
         }
         return 1;
     }

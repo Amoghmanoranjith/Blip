@@ -40,19 +40,35 @@ public class RegisterService {
                 .outputTaskMapping(new HashMap<>())
                 .taskDependenciesMapping(new HashMap<>())
                 .build();
+
+        // check for general structural errors and get job definition pojo
+        //*******************************************************
+        this.fileParserService.parseFile(validationContext, path);
+        if(!validationContext.getErrors().isEmpty()){
+            throw new ValidationException(validationContext.getErrors());
+        }
+        //*******************************************************
+
         this.populateValidationContext(validationContext);
 
-        this.fileParserService.parseFile(validationContext, path);
         // performs semantic validator
+        //*******************************************************
         this.semanticValidationService.validate(validationContext);
+        if(!validationContext.getErrors().isEmpty()){
+            throw new ValidationException(validationContext.getErrors());
+        }
+        //*******************************************************
+
         // create the graph and put in validationContext
-        this.graphGeneratorService.generate(validationContext);
         // then create pojos in that order
         // perform specific pojo validation
+        //*******************************************************
         this.specificValidationService.validate(validationContext);
         if(!validationContext.getErrors().isEmpty()){
             throw new ValidationException(validationContext.getErrors());
         }
+        //*******************************************************
+
         logger.info("passed");
         // perform semantic validation for these specifics
     }
@@ -82,8 +98,8 @@ public class RegisterService {
             taskMap.put(task.getId(), task);
 
             outputTaskMapping.put(task.getOutput(), task.getId());
-
-            taskDependenciesMapping.put(task.getId(), new HashSet<>(task.getDependencies()));
+            if(task.getDependencies() != null && !task.getDependencies().isEmpty())
+                taskDependenciesMapping.put(task.getId(), new HashSet<>(task.getDependencies()));
         });
         validationContext.setTaskCountMap(taskCountMap);
         validationContext.setReferenceCountMap(referenceCountMap);

@@ -7,8 +7,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class MessageSourceUtil {
     private final MessageSource messageSource;
-
-    // Spring injects the bean into the constructor, and we set the static field
     public MessageSourceUtil(MessageSource messageSource) {
         this.messageSource = messageSource;
     }

@@ -1,9 +1,6 @@
 package mp.org.blip.validator.onerror;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Validator;
 import mp.org.blip.context.ValidationContext;
-import mp.org.blip.definition.OnErrorDefinition;
 import mp.org.blip.definition.TaskDefinition;
 import mp.org.blip.enumeration.OnErrorTypes;
 import mp.org.blip.exception.ValidationError;
@@ -32,7 +29,7 @@ public class OnErrorValidator {
             validationContext.addError(new ValidationError(parentProperty + "action", "Action is not valid"));
             return; // cant move to switch
         }
-        switch (OnErrorTypes.valueOf(onErrorTypeString)) {
+        switch (OnErrorTypes.from(onErrorTypeString)) {
             case OnErrorTypes.FAIL -> {
                 this.failValidator.validate(validationContext, taskDefinition, parentProperty + "config.");
             }

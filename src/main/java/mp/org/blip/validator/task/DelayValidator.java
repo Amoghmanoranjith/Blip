@@ -8,9 +8,12 @@ import mp.org.blip.definition.TaskDefinition;
 import mp.org.blip.definition.task.DelayConfigDefinition;
 import mp.org.blip.definition.task.HttpConfigDefinition;
 import mp.org.blip.exception.ValidationError;
+import mp.org.blip.service.ObjectMapperService;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+@Component
 public class DelayValidator {
     // id
     // type
@@ -19,24 +22,16 @@ public class DelayValidator {
     // output is null
     // on error is null
 
-    private final ObjectMapper objectMapper;
+    private final ObjectMapperService objectMapperService;
     private final Validator validator;
 
-    public DelayValidator(ObjectMapper objectMapper, Validator validator) {
-        this.objectMapper = objectMapper;
+    public DelayValidator(ObjectMapperService objectMapperService, Validator validator) {
+        this.objectMapperService = objectMapperService;
         this.validator = validator;
     }
 
     public void validate(ValidationContext validationContext, TaskDefinition taskDefinition, String parentProperty) {
-        DelayConfigDefinition definition = this.objectMapper.convertValue(taskDefinition.getConfig(), DelayConfigDefinition.class);
-        Set<ConstraintViolation<DelayConfigDefinition>> violations = this.validator.validate(definition);
-
-        if (!violations.isEmpty()) {
-            for (ConstraintViolation<DelayConfigDefinition> violation : violations) {
-                validationContext.addError(new ValidationError(parentProperty + "config." + violation.getPropertyPath().toString(), violation.getMessage()));
-            }
-        }
-
+        this.objectMapperService.convertValue(taskDefinition.getConfig(), DelayConfigDefinition.class, parentProperty, validationContext);
         if(taskDefinition.getOutput() != null){
             validationContext.addError(new ValidationError(parentProperty + "output", "This type of task cannot have an output"));
         }

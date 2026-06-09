@@ -8,25 +8,22 @@ import mp.org.blip.definition.OnErrorDefinition;
 import mp.org.blip.definition.TaskDefinition;
 import mp.org.blip.definition.onerror.RetryConfigDefinition;
 import mp.org.blip.exception.ValidationError;
+import mp.org.blip.service.ObjectMapperService;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 // optionally has number of retries and a delay between retries setting
+@Component
 public class RetryValidator {
-    private final ObjectMapper objectMapper;
     private final Validator validator;
-    public RetryValidator(ObjectMapper objectMapper, Validator validator) {
-        this.objectMapper = objectMapper;
+    private final ObjectMapperService objectMapperService;
+    public RetryValidator(Validator validator, ObjectMapperService objectMapperService) {
         this.validator = validator;
+        this.objectMapperService = objectMapperService;
     }
     // property will be like task[0].on_error.config.
     public void validate(ValidationContext validationContext, TaskDefinition taskDefinition, String parentProperty) {
-        RetryConfigDefinition definition = this.objectMapper.convertValue(taskDefinition.getOnError().getConfig(), RetryConfigDefinition.class);
-        Set<ConstraintViolation<RetryConfigDefinition>> violations = this.validator.validate(definition);
-        if (!violations.isEmpty()) {
-            violations.forEach(violation -> {
-                validationContext.addError(new ValidationError(parentProperty + violation.getPropertyPath().toString(), violation.getMessage()));
-            });
-        }
+        this.objectMapperService.convertValue(taskDefinition.getOnError().getConfig(), RetryConfigDefinition.class, parentProperty, validationContext);
     }
 }
