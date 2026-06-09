@@ -17,7 +17,7 @@ Okay so it doesnt work that way, imma pass the parent property name for sub vali
 
 for each definition i have a parent validator that resolves the given type and calls the required sub validator
 
-![img.png](img.png)
+![img.png](images/img.png)
 
 it ends up looking like this, the point is to make this extensible,
 lets say we add a new task now we need to update task types enum, and the task validator parent

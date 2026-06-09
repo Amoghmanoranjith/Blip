@@ -1,5 +1,5 @@
 ## Register Architecture
-![img_1.png](img_1.png)
+![img_1.png](images/img_1.png)
 
 ### File Parser
 - fail fast errors
@@ -24,7 +24,7 @@
 - Still need to add a resolver so that we can only put codes when creating ValidationError and the code is resolved into message from ValidationMessages.properties
 
 ## Specific Validation Architecture
-![img_2.png](img_2.png)
+![img_2.png](images/img_2.png)
 
 
 
