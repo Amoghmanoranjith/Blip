@@ -30,7 +30,7 @@ public class ExecutionExceptionHandler implements CommandLine.IExecutionExceptio
                     this.messageSourceUtil.getMessage(ex.getMessage()) + " at Line: " + ex.getLineNumber() + " Column: " + ex.getColumnNumber()
             );
             case ValidationException ex -> {
-                commandLine.getErr().println("\u001B[31m[ERROR] Schema validation failed:\u001B[0m");
+                commandLine.getErr().println("\u001B[31m[ERROR] :\u001B[0m");
 
                 ex.getErrors().forEach(error -> {
                     // Formats output nicely. Example: "  - name: Field cannot be null"
