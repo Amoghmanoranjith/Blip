@@ -18,13 +18,13 @@ public class RegisterService {
     private final SemanticValidationService semanticValidationService;
     private final FileParserService fileParserService;
     private final SpecificValidationService specificValidationService;
-    private final GraphGeneratorService graphGeneratorService;
+    private final DAGValidationService dagValidationService;
     Logger logger = LoggerFactory.getLogger(RegisterService.class);
-    public RegisterService(SemanticValidationService semanticValidationService, FileParserService fileParserService, SpecificValidationService specificValidationService, GraphGeneratorService graphGeneratorService) {
+    public RegisterService(SemanticValidationService semanticValidationService, FileParserService fileParserService, SpecificValidationService specificValidationService, DAGValidationService dagValidationService) {
         this.semanticValidationService = semanticValidationService;
         this.fileParserService = fileParserService;
         this.specificValidationService = specificValidationService;
-        this.graphGeneratorService = graphGeneratorService;
+        this.dagValidationService = dagValidationService;
     }
     public void register(String path) {
         // build a context
@@ -44,9 +44,9 @@ public class RegisterService {
         // check for general structural errors and get job definition pojo
         //*******************************************************
         this.fileParserService.parseFile(validationContext, path);
-        if(!validationContext.getErrors().isEmpty()){
-            throw new ValidationException(validationContext.getErrors());
-        }
+//        if(!validationContext.getErrors().isEmpty()){
+//            throw new ValidationException(validationContext.getErrors());
+//        }
         //*******************************************************
 
         this.populateValidationContext(validationContext);
@@ -54,20 +54,24 @@ public class RegisterService {
         // performs semantic validator
         //*******************************************************
         this.semanticValidationService.validate(validationContext);
-        if(!validationContext.getErrors().isEmpty()){
-            throw new ValidationException(validationContext.getErrors());
-        }
+//        if(!validationContext.getErrors().isEmpty()){
+//            throw new ValidationException(validationContext.getErrors());
+//        }
         //*******************************************************
 
-        // create the graph and put in validationContext
-        // then create pojos in that order
         // perform specific pojo validation
         //*******************************************************
         this.specificValidationService.validate(validationContext);
+//        if(!validationContext.getErrors().isEmpty()){
+//            throw new ValidationException(validationContext.getErrors());
+//        }
+        //*******************************************************
+
+        // perform dag validation
+        this.dagValidationService.validate(validationContext);
         if(!validationContext.getErrors().isEmpty()){
             throw new ValidationException(validationContext.getErrors());
         }
-        //*******************************************************
 
         logger.info("passed");
         // perform semantic validation for these specifics
@@ -100,6 +104,8 @@ public class RegisterService {
             outputTaskMapping.put(task.getOutput(), task.getId());
             if(task.getDependencies() != null && !task.getDependencies().isEmpty())
                 taskDependenciesMapping.put(task.getId(), new HashSet<>(task.getDependencies()));
+            else
+                taskDependenciesMapping.put(task.getId(), new HashSet<>());
         });
         validationContext.setTaskCountMap(taskCountMap);
         validationContext.setReferenceCountMap(referenceCountMap);
