@@ -16,10 +16,10 @@ public class HttpConfigDefinition {
     @NotBlank(message = "{http.url.required}")
     private String url; //param
 
-    @NotNull(message = "{http.method.required}")
+    @NotBlank(message = "{http.method.required}")
     private String method;
 
-    @NotNull(message = "{http.response_type.required}")
+    @NotBlank(message = "{http.response_type.required}")
     @JsonProperty("response_type")
     private String responseType;
 
