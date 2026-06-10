@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
@@ -39,6 +40,9 @@ public class ValidationContext {
     }
     public void mergeDependencies(String id, Set<String> dependencies) {
         this.taskDependenciesMapping.computeIfAbsent(id, k -> new HashSet<>()).addAll(dependencies);
+    }
+    public Set<String> convertOutputToDependency(Set<String> outputs){
+        return outputs.stream().map(s -> outputTaskMapping.get(s)).collect(Collectors.toSet());
     }
     public void mergeDependency(String id, String dependency){
         this.taskDependenciesMapping.get(id).add(dependency);

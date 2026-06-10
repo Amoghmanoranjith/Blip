@@ -46,7 +46,7 @@ public class HttpValidator {
 
         try {
             HttpConfigDefinition definition = this.objectMapperService.convertValue(taskDefinition.getConfig(), HttpConfigDefinition.class, parentProperty+"config.", validationContext);
-            if (definition == null) {
+            if (definition == null ) {
                 return;
             }
             // structural validation
@@ -81,9 +81,9 @@ public class HttpValidator {
                 }
             });
             // map the output to the task producing it and have a full dependency list
-            validationContext.mergeDependencies(taskDefinition.getId(), params.get("url"));
-            validationContext.mergeDependencies(taskDefinition.getId(), params.get("body"));
-            validationContext.mergeDependencies(taskDefinition.getId(), params.get("headers"));
+            validationContext.mergeDependencies(taskDefinition.getId(), validationContext.convertOutputToDependency(params.get("url")));
+            validationContext.mergeDependencies(taskDefinition.getId(), validationContext.convertOutputToDependency(params.get("body")));
+            validationContext.mergeDependencies(taskDefinition.getId(), validationContext.convertOutputToDependency(params.get("headers")));
 
             this.onErrorValidator.validate(validationContext, taskDefinition, parentProperty + "on_error.");
         } catch (IllegalArgumentException e) {
