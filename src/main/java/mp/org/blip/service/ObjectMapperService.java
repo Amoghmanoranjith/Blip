@@ -20,7 +20,7 @@ public class ObjectMapperService {
         this.objectMapper = objectMapper;
         this.validator = validator;
     }
-
+    //tasks[0].config
     public <T> T convertValue(Object source, Class<T> targetType, String parentProperty, ValidationContext validationContext) {
         try {
             T value = objectMapper.convertValue(source, targetType);
@@ -28,8 +28,9 @@ public class ObjectMapperService {
 
             if (!violations.isEmpty()) {
                 for (ConstraintViolation<T> violation : violations) {
-                    validationContext.addError(new ValidationError(parentProperty + "config." + violation.getPropertyPath().toString(), violation.getMessage()));
+                    validationContext.addError(new ValidationError(parentProperty + violation.getPropertyPath().toString(), violation.getMessage()));
                 }
+                return null;
             }
             return value;
         } catch (IllegalArgumentException e) {
