@@ -24,6 +24,9 @@ public class OnErrorValidator {
     // task[0].on_error.
     public void validate(ValidationContext validationContext, TaskDefinition taskDefinition, String parentProperty) {
         // is the type of onerror provided valid?
+        // if no on_error then return
+        if(taskDefinition.getOnError() == null)
+            return;
         String onErrorTypeString = taskDefinition.getOnError().getAction();
         if(!OnErrorTypes.isValid(onErrorTypeString)) {
             validationContext.addError(new ValidationError(parentProperty + "action", "Action is not valid"));
