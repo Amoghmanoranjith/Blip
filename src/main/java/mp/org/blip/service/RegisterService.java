@@ -4,8 +4,10 @@ import mp.org.blip.context.ValidationContext;
 import mp.org.blip.definition.JobDefinition;
 import mp.org.blip.definition.TaskDefinition;
 import mp.org.blip.exception.ValidationException;
+import mp.org.blip.service.persistance.CronPersistanceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -19,12 +21,14 @@ public class RegisterService {
     private final FileParserService fileParserService;
     private final SpecificValidationService specificValidationService;
     private final DAGValidationService dagValidationService;
+    private final CronPersistanceService cronPersistanceService;
     Logger logger = LoggerFactory.getLogger(RegisterService.class);
-    public RegisterService(SemanticValidationService semanticValidationService, FileParserService fileParserService, SpecificValidationService specificValidationService, DAGValidationService dagValidationService) {
+    public RegisterService(SemanticValidationService semanticValidationService, FileParserService fileParserService, SpecificValidationService specificValidationService, DAGValidationService dagValidationService, CronPersistanceService cronPersistanceService) {
         this.semanticValidationService = semanticValidationService;
         this.fileParserService = fileParserService;
         this.specificValidationService = specificValidationService;
         this.dagValidationService = dagValidationService;
+        this.cronPersistanceService = cronPersistanceService;
     }
     public void register(String path) {
         // build a context
@@ -72,6 +76,10 @@ public class RegisterService {
         if(!validationContext.getErrors().isEmpty()){
             throw new ValidationException(validationContext.getErrors());
         }
+
+        // save the yaml file as a compiled .blip file
+        // build Job entity and store in persistance service
+        this.cronPersistanceService.save(validationContext).subscribe();
 
         logger.info("passed");
         // perform semantic validation for these specifics

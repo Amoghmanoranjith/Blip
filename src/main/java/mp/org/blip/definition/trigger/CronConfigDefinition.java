@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import mp.org.blip.annotation.ValidCron;
 
 @Data
 @AllArgsConstructor
@@ -13,6 +14,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class CronConfigDefinition {
     @NotBlank(message = "{cron.schedule.required}")
-    @Pattern(message = "{cron.schedule.invalid}", regexp = "(\\*(/\\d+)?|\\?|\\b([0-5]?\\d)(-[0-5]?\\d)?(/[0-5]?\\d)?\\b)")
+    @ValidCron(message = "{cron.schedule.invalid_expression}")
     private String schedule;
 }
