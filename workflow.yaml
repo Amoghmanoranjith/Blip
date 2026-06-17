@@ -3,7 +3,6 @@ trigger:
   type: cron
   config:
     schedule: "*/10 * * * * *"
-    spchedule: "*/10 * * * * *"
 
 
 tasks:
@@ -15,18 +14,15 @@ tasks:
       response_type: json
     output: user
     dependencies: [t2]
-
     on_error:
-      action: fail
+      action: fallback
+      config:
+        fallback: t2
 
   - id: t2
     type: http
     config:
       method: GET
-      url: "https://jsonplaceholder.typicode.com/${user3.byu}/${user2.id}"
+      url: "https://jsonplaceholder.typicode.com/users/1"
       response_type: json
-      headers: "Authorization: user.token"
     output: user1
-
-    on_error:
-      action: fail
